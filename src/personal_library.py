@@ -57,8 +57,10 @@ class PersonalLibrary:
     def borrow_book(self, lendor_id, book_id):
         cursor = self.conn.cursor()
         # Check if book is already borrowed and not returned
-        cursor.execute('SELECT * FROM borrowed WHERE book_id = ? AND returned = 0', (book_id,))
-        if cursor.fetchone():
+        cursor.execute('''SELECT id FROM books WHERE id NOT IN (
+            SELECT book_id FROM borrowed WHERE returned = 1
+        )''')
+        if (book_id,) not in cursor.fetchall():
             raise Exception('Book is already borrowed')
         cursor.execute('INSERT INTO borrowed (lendor_id, book_id, returned) VALUES (?, ?, 1)', (lendor_id, book_id))
         self.conn.commit()
@@ -85,8 +87,8 @@ class PersonalLibrary:
 
     def get_books_not_borrowed(self):
         cursor = self.conn.cursor()
-        cursor.execute('''SELECT * FROM books WHERE id IN (
-            SELECT book_id FROM borrowed WHERE returned = 0
+        cursor.execute('''SELECT * FROM books WHERE id NOT IN (
+            SELECT book_id FROM borrowed WHERE returned = 1
         )''')
         return cursor.fetchall()
 
