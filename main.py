@@ -1,4 +1,11 @@
 
+"""
+main.py
+
+Kivy UI for PersonalLibrary management. Provides screens for adding/removing books and lenders,
+borrowing/returning books, and viewing book/lender details. Uses src.personal_library.PersonalLibrary
+for backend operations.
+"""
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -9,7 +16,12 @@ from src.personal_library import PersonalLibrary
 
 library = PersonalLibrary()
 
+
 class MainMenu(Screen):
+    """
+    Main menu screen with navigation buttons for all PersonalLibrary operations.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -27,11 +39,17 @@ class MainMenu(Screen):
         ]
         for text, screen in buttons:
             btn = Button(text=text)
-            btn.bind(on_release=lambda btn, s=screen: setattr(self.manager, 'current', s))
+            btn.bind(on_release=lambda btn, s=screen: setattr(
+                self.manager, 'current', s))
             layout.add_widget(btn)
         self.add_widget(layout)
 
+
 class AddBookScreen(Screen):
+    """
+    Screen for adding a new book to the library.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -44,9 +62,12 @@ class AddBookScreen(Screen):
         layout.add_widget(self.author_input)
         layout.add_widget(add_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def add_book(self, instance):
+        """Add a book using title and author input fields."""
         title = self.title_input.text
         author = self.author_input.text
         if title and author:
@@ -55,7 +76,12 @@ class AddBookScreen(Screen):
         else:
             self.result.text = "Please enter both title and author."
 
+
 class RemoveBookScreen(Screen):
+    """
+    Screen for removing a book by its ID.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -66,9 +92,12 @@ class RemoveBookScreen(Screen):
         layout.add_widget(self.book_id_input)
         layout.add_widget(remove_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def remove_book(self, instance):
+        """Remove a book using the provided book ID."""
         try:
             book_id = int(self.book_id_input.text)
             library.remove_book(book_id)
@@ -76,7 +105,12 @@ class RemoveBookScreen(Screen):
         except Exception as e:
             self.result.text = str(e)
 
+
 class ShowAllBooksScreen(Screen):
+    """
+    Screen to display all books in the library.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -85,13 +119,22 @@ class ShowAllBooksScreen(Screen):
         show_btn.bind(on_release=self.show_books)
         layout.add_widget(show_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def show_books(self, instance):
+        """Show all books in the library."""
         books = library.get_all_books()
-        self.result.text = '\n'.join([f"{b[0]}: {b[1]} by {b[2]}" for b in books])
+        self.result.text = '\n'.join(
+            [f"{b[0]}: {b[1]} by {b[2]}" for b in books])
+
 
 class ShowAvailableBooksScreen(Screen):
+    """
+    Screen to display all available (not borrowed) books.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -100,13 +143,22 @@ class ShowAvailableBooksScreen(Screen):
         show_btn.bind(on_release=self.show_books)
         layout.add_widget(show_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def show_books(self, instance):
+        """Show all available books."""
         books = library.get_books_not_borrowed()
-        self.result.text = '\n'.join([f"{b[0]}: {b[1]} by {b[2]}" for b in books])
+        self.result.text = '\n'.join(
+            [f"{b[0]}: {b[1]} by {b[2]}" for b in books])
+
 
 class AddLenderScreen(Screen):
+    """
+    Screen for adding a new lender.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -121,9 +173,12 @@ class AddLenderScreen(Screen):
         layout.add_widget(self.mobile_input)
         layout.add_widget(add_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def add_lender(self, instance):
+        """Add a lender using name, address, and mobile input fields."""
         name = self.name_input.text
         address = self.address_input.text
         mobile = self.mobile_input.text
@@ -133,7 +188,12 @@ class AddLenderScreen(Screen):
         else:
             self.result.text = "Please enter lender name."
 
+
 class RemoveLenderScreen(Screen):
+    """
+    Screen for removing a lender by ID.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -144,9 +204,12 @@ class RemoveLenderScreen(Screen):
         layout.add_widget(self.lender_id_input)
         layout.add_widget(remove_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def remove_lender(self, instance):
+        """Remove a lender using the provided lender ID."""
         try:
             lendor_id = int(self.lender_id_input.text)
             library.remove_lender(lendor_id)
@@ -154,7 +217,12 @@ class RemoveLenderScreen(Screen):
         except Exception as e:
             self.result.text = str(e)
 
+
 class BorrowBookScreen(Screen):
+    """
+    Screen for borrowing a book by specifying lender and book IDs.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -167,9 +235,12 @@ class BorrowBookScreen(Screen):
         layout.add_widget(self.book_id_input)
         layout.add_widget(borrow_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def borrow_book(self, instance):
+        """Borrow a book using lender and book IDs."""
         try:
             lendor_id = int(self.lender_id_input.text)
             book_id = int(self.book_id_input.text)
@@ -178,7 +249,12 @@ class BorrowBookScreen(Screen):
         except Exception as e:
             self.result.text = str(e)
 
+
 class ReturnBookScreen(Screen):
+    """
+    Screen for returning a borrowed book by borrowed ID.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -189,9 +265,12 @@ class ReturnBookScreen(Screen):
         layout.add_widget(self.borrowed_id_input)
         layout.add_widget(return_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def return_book(self, instance):
+        """Return a borrowed book using borrowed ID."""
         try:
             borrowed_id = int(self.borrowed_id_input.text)
             library.return_borrowed_book(borrowed_id)
@@ -199,7 +278,12 @@ class ReturnBookScreen(Screen):
         except Exception as e:
             self.result.text = str(e)
 
+
 class BorrowedBooksLenderScreen(Screen):
+    """
+    Screen to show borrowed books with lender details.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -208,13 +292,22 @@ class BorrowedBooksLenderScreen(Screen):
         show_btn.bind(on_release=self.show_borrowed)
         layout.add_widget(show_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def show_borrowed(self, instance):
+        """Show borrowed books with lender details."""
         books = library.get_books_borrowed_with_lender_details()
-        self.result.text = '\n'.join([f"Book {b[0]}: {b[1]} by {b[2]}, Lender: {b[3]}, {b[4]}, {b[5]}, Borrowed ID: {b[6]}" for b in books])
+        self.result.text = '\n'.join(
+            [f"Book {b[0]}: {b[1]} by {b[2]}, Lender: {b[3]}, {b[4]}, {b[5]}, Borrowed ID: {b[6]}" for b in books])
+
 
 class BooksNotBorrowedScreen(Screen):
+    """
+    Screen to show books that are not borrowed.
+    """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
@@ -223,13 +316,22 @@ class BooksNotBorrowedScreen(Screen):
         show_btn.bind(on_release=self.show_books)
         layout.add_widget(show_btn)
         layout.add_widget(self.result)
-        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu')))
+        layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
+            self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
     def show_books(self, instance):
+        """Show books that are not borrowed."""
         books = library.get_books_not_borrowed()
-        self.result.text = '\n'.join([f"{b[0]}: {b[1]} by {b[2]}" for b in books])
+        self.result.text = '\n'.join(
+            [f"{b[0]}: {b[1]} by {b[2]}" for b in books])
+
 
 class PersonalLibraryApp(App):
+    """
+    Main Kivy App class. Sets up the ScreenManager and all screens.
+    """
+
     def build(self):
         sm = ScreenManager()
         sm.add_widget(MainMenu(name='main_menu'))
@@ -244,6 +346,7 @@ class PersonalLibraryApp(App):
         sm.add_widget(BorrowedBooksLenderScreen(name='borrowed_books_lender'))
         sm.add_widget(BooksNotBorrowedScreen(name='books_not_borrowed'))
         return sm
+
 
 if __name__ == '__main__':
     run_ui = True

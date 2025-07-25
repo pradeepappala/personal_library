@@ -1,9 +1,25 @@
+
+"""
+test_personal_library.py
+
+Unit tests for PersonalLibrary class. Tests book and lender management, borrowing/returning,
+and query methods using a temporary SQLite database.
+"""
 import unittest
 import os
 from src.personal_library import PersonalLibrary
 
+
 class TestPersonalLibrary(unittest.TestCase):
+    """
+    Unit tests for PersonalLibrary methods.
+    Creates a temporary database for each test.
+    """
+
     def setUp(self):
+        """
+        Set up a fresh test database before each test.
+        """
         self.test_db = 'test_library.db'
         # Remove if exists
         if os.path.exists(self.test_db):
@@ -11,11 +27,17 @@ class TestPersonalLibrary(unittest.TestCase):
         self.lib = PersonalLibrary(self.test_db)
 
     def tearDown(self):
+        """
+        Clean up the test database after each test.
+        """
         self.lib.close()
         if os.path.exists(self.test_db):
             os.remove(self.test_db)
 
     def test_add_and_remove_book(self):
+        """
+        Test adding and removing a book.
+        """
         book_id = self.lib.add_book('Book1', 'Author1')
         books = self.lib.get_all_books()
         self.assertEqual(len(books), 1)
@@ -24,11 +46,17 @@ class TestPersonalLibrary(unittest.TestCase):
         self.assertEqual(len(books), 0)
 
     def test_add_and_remove_lender(self):
+        """
+        Test adding and removing a lender.
+        """
         lendor_id = self.lib.add_lender('Lender1', 'Addr1', '123')
         self.lib.remove_lender(lendor_id)
         # No direct get_lendors, so just check no error
 
     def test_borrow_and_return_book(self):
+        """
+        Test borrowing and returning a book.
+        """
         book_id = self.lib.add_book('Book2', 'Author2')
         lendor_id = self.lib.add_lender('Lender2', 'Addr2', '456')
         borrowed_id = self.lib.borrow_book(lendor_id, book_id)
@@ -39,6 +67,9 @@ class TestPersonalLibrary(unittest.TestCase):
         self.assertEqual(len(borrowed), 0)
 
     def test_get_books_not_borrowed(self):
+        """
+        Test getting books that are not borrowed.
+        """
         book_id = self.lib.add_book('Book3', 'Author3')
         available = self.lib.get_books_not_borrowed()
         self.assertTrue(any(b[0] == book_id for b in available))
@@ -48,6 +79,9 @@ class TestPersonalLibrary(unittest.TestCase):
         self.assertFalse(any(b[0] == book_id for b in available))
 
     def test_most_and_least_borrowed(self):
+        """
+        Test getting the most and least borrowed books.
+        """
         b1 = self.lib.add_book('Book4', 'Author4')
         b2 = self.lib.add_book('Book5', 'Author5')
         l1 = self.lib.add_lender('Lender4', 'Addr4', '111')
@@ -61,6 +95,7 @@ class TestPersonalLibrary(unittest.TestCase):
         least = self.lib.get_least_borrowed_book()
         self.assertEqual(most[0], b1)
         self.assertEqual(least[0], b2)
+
 
 if __name__ == '__main__':
     unittest.main()
