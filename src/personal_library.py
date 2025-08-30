@@ -13,6 +13,15 @@ class PersonalLibrary:
     """
     PersonalLibrary manages books, lenders, and borrowing/returning operations using SQLite.
     """
+    def get_all_lendors(self):
+        """
+        Get all lenders in the library.
+        Returns:
+            list: List of all lenders.
+        """
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM lendors')
+        return cursor.fetchall()
 
     def __init__(self, db_name='library.db'):
         """

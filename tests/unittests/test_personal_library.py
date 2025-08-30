@@ -16,6 +16,15 @@ class TestPersonalLibrary(unittest.TestCase):
     Creates a temporary database for each test.
     """
 
+    def test_get_all_lendors(self):
+        """
+        Test getting all lenders.
+        """
+        lendor_id1 = self.lib.add_lender('LenderA', 'AddrA', '111')
+        lendor_id2 = self.lib.add_lender('LenderB', 'AddrB', '222')
+        lendors = self.lib.get_all_lendors()
+        self.assertTrue(any(l[0] == lendor_id1 for l in lendors))
+        self.assertTrue(any(l[0] == lendor_id2 for l in lendors))
     def setUp(self):
         """
         Set up a fresh test database before each test.
