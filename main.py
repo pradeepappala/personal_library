@@ -120,11 +120,14 @@ class RemoveBookScreen(Screen):
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
         self.book_id_input = TextInput(hint_text='Book ID')
         remove_btn = Button(text='Remove Book')
+        show_book_btn = Button(text='Show Book Details')
         self.result = Label(text='', size_hint_y=None, valign='top', halign='left')
         self.result.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
         self.result.text_size = (None, None)
         remove_btn.bind(on_release=self.remove_book)
+        show_book_btn.bind(on_release=self.show_book_details)
         layout.add_widget(self.book_id_input)
+        layout.add_widget(show_book_btn)
         layout.add_widget(remove_btn)
         scroll = ScrollView(size_hint=(1, 1), bar_width=10)
         scroll.add_widget(self.result)
@@ -132,6 +135,17 @@ class RemoveBookScreen(Screen):
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
             self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
+    def show_book_details(self, instance):
+        try:
+            book_id = int(self.book_id_input.text.strip())
+            b = library.get_book_details(book_id)
+            if b:
+                self.result.text = f"Book Details:\nID: {b[0]}\nTitle: {b[1]}\nAuthor: {b[2]}\nAdded: {b[3]}"
+            else:
+                self.result.text = "Book not found."
+        except Exception as e:
+            self.result.text = str(e)
 
     def remove_book(self, instance):
         """Remove a book using the provided book ID."""
@@ -248,11 +262,14 @@ class RemoveLenderScreen(Screen):
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
         self.lender_id_input = TextInput(hint_text='Lender ID')
         remove_btn = Button(text='Remove Lender')
+        show_lender_btn = Button(text='Show Lender Details')
         self.result = Label(text='', size_hint_y=None, valign='top', halign='left')
         self.result.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
         self.result.text_size = (None, None)
+        show_lender_btn.bind(on_release=self.show_lender_details)
         remove_btn.bind(on_release=self.remove_lender)
         layout.add_widget(self.lender_id_input)
+        layout.add_widget(show_lender_btn)
         layout.add_widget(remove_btn)
         scroll = ScrollView(size_hint=(1, 1), bar_width=10)
         scroll.add_widget(self.result)
@@ -260,6 +277,17 @@ class RemoveLenderScreen(Screen):
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
             self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
+    def show_lender_details(self, instance):
+        try:
+            lendor_id = int(self.lender_id_input.text.strip())
+            l = library.get_lendor_details(lendor_id)
+            if l:
+                self.result.text = f"Lender Details:\nID: {l[0]}\nName: {l[1]}\nAddress: {l[2]}\nMobile: {l[3]}"
+            else:
+                self.result.text = "Lender not found."
+        except Exception as e:
+            self.result.text = str(e)
 
     def remove_lender(self, instance):
         """Remove a lender using the provided lender ID."""
@@ -282,12 +310,18 @@ class BorrowBookScreen(Screen):
         self.lender_id_input = TextInput(hint_text='Lender ID')
         self.book_id_input = TextInput(hint_text='Book ID')
         borrow_btn = Button(text='Borrow Book')
+        show_lender_btn = Button(text='Show Lender Details')
+        show_book_btn = Button(text='Show Book Details')
         self.result = Label(text='', size_hint_y=None, valign='top', halign='left')
         self.result.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
         self.result.text_size = (None, None)
         borrow_btn.bind(on_release=self.borrow_book)
+        show_lender_btn.bind(on_release=self.show_lender_details)
+        show_book_btn.bind(on_release=self.show_book_details)
         layout.add_widget(self.lender_id_input)
+        layout.add_widget(show_lender_btn)
         layout.add_widget(self.book_id_input)
+        layout.add_widget(show_book_btn)
         layout.add_widget(borrow_btn)
         scroll = ScrollView(size_hint=(1, 1), bar_width=10)
         scroll.add_widget(self.result)
@@ -295,6 +329,28 @@ class BorrowBookScreen(Screen):
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
             self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
+    def show_lender_details(self, instance):
+        try:
+            lendor_id = int(self.lender_id_input.text.strip())
+            l = library.get_lendor_details(lendor_id)
+            if l:
+                self.result.text = f"Lender Details:\nID: {l[0]}\nName: {l[1]}\nAddress: {l[2]}\nMobile: {l[3]}"
+            else:
+                self.result.text = "Lender not found."
+        except Exception as e:
+            self.result.text = str(e)
+
+    def show_book_details(self, instance):
+        try:
+            book_id = int(self.book_id_input.text.strip())
+            b = library.get_book_details(book_id)
+            if b:
+                self.result.text = f"Book Details:\nID: {b[0]}\nTitle: {b[1]}\nAuthor: {b[2]}\nAdded: {b[3]}"
+            else:
+                self.result.text = "Book not found."
+        except Exception as e:
+            self.result.text = str(e)
 
     def borrow_book(self, instance):
         """Borrow a book using lender and book IDs."""
@@ -317,11 +373,17 @@ class ReturnBookScreen(Screen):
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
         self.borrowed_id_input = TextInput(hint_text='Borrowed ID')
         return_btn = Button(text='Return Book')
+        show_lender_btn = Button(text='Show Lender Details')
+        show_book_btn = Button(text='Show Book Details')
         self.result = Label(text='', size_hint_y=None, valign='top', halign='left')
         self.result.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
         self.result.text_size = (None, None)
         return_btn.bind(on_release=self.return_book)
+        show_lender_btn.bind(on_release=self.show_lender_details)
+        show_book_btn.bind(on_release=self.show_book_details)
         layout.add_widget(self.borrowed_id_input)
+        layout.add_widget(show_lender_btn)
+        layout.add_widget(show_book_btn)
         layout.add_widget(return_btn)
         scroll = ScrollView(size_hint=(1, 1), bar_width=10)
         scroll.add_widget(self.result)
@@ -329,6 +391,42 @@ class ReturnBookScreen(Screen):
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
             self.manager, 'current', 'main_menu')))
         self.add_widget(layout)
+
+    def show_lender_details(self, instance):
+        try:
+            borrowed_id = int(self.borrowed_id_input.text.strip())
+            cursor = library.conn.cursor()
+            cursor.execute('SELECT lendor_id, book_id FROM borrowed WHERE id = ?', (borrowed_id,))
+            row = cursor.fetchone()
+            if row:
+                lendor_id, book_id = row
+                l = library.get_lendor_details(lendor_id)
+                if l:
+                    self.result.text = f"Lender Details:\nID: {l[0]}\nName: {l[1]}\nAddress: {l[2]}\nMobile: {l[3]}"
+                else:
+                    self.result.text = "Lender not found."
+            else:
+                self.result.text = "Borrowed record not found."
+        except Exception as e:
+            self.result.text = str(e)
+
+    def show_book_details(self, instance):
+        try:
+            borrowed_id = int(self.borrowed_id_input.text.strip())
+            cursor = library.conn.cursor()
+            cursor.execute('SELECT lendor_id, book_id FROM borrowed WHERE id = ?', (borrowed_id,))
+            row = cursor.fetchone()
+            if row:
+                lendor_id, book_id = row
+                b = library.get_book_details(book_id)
+                if b:
+                    self.result.text = f"Book Details:\nID: {b[0]}\nTitle: {b[1]}\nAuthor: {b[2]}\nAdded: {b[3]}"
+                else:
+                    self.result.text = "Book not found."
+            else:
+                self.result.text = "Borrowed record not found."
+        except Exception as e:
+            self.result.text = str(e)
 
     def return_book(self, instance):
         """Return a borrowed book using borrowed ID."""

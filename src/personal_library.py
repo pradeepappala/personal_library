@@ -13,6 +13,31 @@ class PersonalLibrary:
     """
     PersonalLibrary manages books, lenders, and borrowing/returning operations using SQLite.
     """
+
+    def get_book_details(self, book_id):
+        """
+        Get details of a book by its ID.
+        Args:
+            book_id (int): ID of the book.
+        Returns:
+            tuple: Book details (id, title, author, added_date) or None.
+        """
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM books WHERE id = ?', (book_id,))
+        return cursor.fetchone()
+
+    def get_lendor_details(self, lendor_id):
+        """
+        Get details of a lender by ID.
+        Args:
+            lendor_id (int): ID of the lender.
+        Returns:
+            tuple: Lender details (id, name, address, mobile) or None.
+        """
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM lendors WHERE id = ?', (lendor_id,))
+        return cursor.fetchone()
+
     def get_all_lendors(self):
         """
         Get all lenders in the library.
