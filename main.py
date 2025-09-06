@@ -1,4 +1,3 @@
-
 """
 main.py
 
@@ -6,6 +5,7 @@ Kivy UI for PersonalLibrary management. Provides screens for adding/removing boo
 borrowing/returning books, and viewing book/lender details. Uses src.personal_library.PersonalLibrary
 for backend operations.
 """
+import os
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -37,6 +37,7 @@ class MainMenu(Screen):
             ("Return Book", "return_book"),
             ("Remove Book", "remove_book"),
             ("Remove Lender", "remove_lender"),
+            ("Manage Tables", "manage_tables"),
         ]
         for text, screen in buttons:
             btn = Button(text=text)
@@ -44,6 +45,76 @@ class MainMenu(Screen):
                 self.manager, 'current', s))
             layout.add_widget(btn)
         self.add_widget(layout)
+
+
+class ManageDataScreen(Screen):
+    """
+    Screen to manage library data: export, import, and clear tables.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
+        self.filename_input = TextInput(text='data.xls', hint_text='Enter filename (e.g. data.xls)', size_hint_y=0.1)
+        self.selected_path = None
+        export_btn = Button(text='Export All Data to Excel', size_hint_y=0.15)
+        export_btn.bind(on_release=self.export_to_excel)
+        import_btn = Button(text='Import Data from Excel', size_hint_y=0.15)
+        import_btn.bind(on_release=self.import_from_excel)
+        clear_btn = Button(text='Clear All Tables', size_hint_y=0.15)
+        clear_btn.bind(on_release=self.clear_tables)
+        self.result = Label(text='', size_hint_y=0.15, valign='top', halign='left')
+        self.result.bind(texture_size=lambda instance, value: setattr(self.result, 'height', value[1]))
+        self.result.text_size = (None, None)
+        back_btn = Button(text='Back', size_hint_y=0.15, on_release=lambda x: setattr(self.manager, 'current', 'main_menu'))
+        layout.add_widget(self.filename_input)
+        layout.add_widget(export_btn)
+        layout.add_widget(import_btn)
+        layout.add_widget(clear_btn)
+        layout.add_widget(self.result)
+        layout.add_widget(back_btn)
+        self.add_widget(layout)
+
+    def get_file_path(self):
+        filename = self.filename_input.text.strip()
+        if not filename:
+            self.result.text = "Please enter a filename ending with .xls."
+            return None, None
+        if not filename.endswith('.xls'):
+            self.result.text = "Filename must end with .xls."
+            return None, None
+        # Use Documents as C:\Users\prade\work\GitHub\personal_library for windows
+        # /sdcard/Download/mylibrary for Android
+        if os.name == 'nt':  # Windows
+            folder = r"C:\Users\prade\work\GitHub\personal_library"
+        else:  # macOS/Linux/Android
+            folder = r'/sdcard/Download/mylibrary'
+
+        return folder, filename
+
+    def export_to_excel(self, instance):
+        folder, filename = self.get_file_path()
+        if not folder or not filename:
+            return
+        os.makedirs(folder, exist_ok=True)
+        file_path = os.path.join(folder, filename)
+        result = library.export_to_excel(file_path)
+        self.result.text = self._wrap_text(result)
+
+    def import_from_excel(self, instance):
+        folder, filename = self.get_file_path()
+        if not folder or not filename:
+            return
+        file_path = os.path.join(folder, filename)
+        result = library.import_from_excel(file_path)
+        self.result.text = self._wrap_text(result)
+
+    def clear_tables(self, instance):
+        result = library.clear_all_tables()
+        self.result.text = self._wrap_text(result)
+
+    def _wrap_text(self, text, width=40):
+        import textwrap
+        return '\n'.join(textwrap.wrap(str(text), width=width))
 
 
 class ShowAllLendorsScreen(Screen):
@@ -485,6 +556,7 @@ class PersonalLibraryApp(App):
         sm.add_widget(ReturnBookScreen(name='return_book'))
         sm.add_widget(RemoveBookScreen(name='remove_book'))
         sm.add_widget(RemoveLenderScreen(name='remove_lender'))
+        sm.add_widget(ManageDataScreen(name='manage_tables'))
         return sm
 
 

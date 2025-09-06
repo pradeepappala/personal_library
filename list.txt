@@ -2,3 +2,4 @@ __init__.py
 main.py
 src/__init__.py
 src/personal_library.py
+buildozer.spec

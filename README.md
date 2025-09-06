@@ -83,8 +83,11 @@ Run (F5 / Ctrl+F5)
 	```
 
 #### 7. Prepare your app source files
+	```bash
+	cd ~/android_app
+	```
 	- Backup old files: `mv <old app src files>, buildozer.spec ../old_android_app/<app_name>`
-	- Create a list of files to copy (e.g., `list.txt` with `main.py, personal_library.py`)
+	- Create a list of files to copy (e.g., `list.txt` with `main.py, personal_library.py, buildozer.spec`)
 	- Copy new files:
 	  ```bash
 	  rsync -arv --files-from='list.txt' /mnt/c/Users/prade/work/GitHub/personal_library/ /home/pradeep/android_app/

@@ -1,4 +1,3 @@
-
 """
 personal_library.py
 
@@ -7,12 +6,34 @@ and queries for book/lender details using SQLite.
 """
 import sqlite3
 from datetime import datetime
+import pandas as pd
 
 
 class PersonalLibrary:
     """
     PersonalLibrary manages books, lenders, and borrowing/returning operations using SQLite.
     """
+    
+    def export_to_excel(self, file_path):
+        """
+        Export all tables (books, lendors, borrowed) to an Excel file at the given path.
+        Args:
+            file_path (str): Path to save the Excel file.
+        Returns:
+            str: Success message or error.
+        """
+        try:
+            with self.conn:
+                books_df = pd.read_sql_query('SELECT * FROM books', self.conn)
+                lendors_df = pd.read_sql_query('SELECT * FROM lendors', self.conn)
+                borrowed_df = pd.read_sql_query('SELECT * FROM borrowed', self.conn)
+            with pd.ExcelWriter(file_path) as writer:
+                books_df.to_excel(writer, sheet_name='Books', index=False)
+                lendors_df.to_excel(writer, sheet_name='Lendors', index=False)
+                borrowed_df.to_excel(writer, sheet_name='Borrowed', index=False)
+            return f"Exported to {file_path}"
+        except Exception as e:
+            return f"Export failed: {e}"
 
     def get_book_details(self, book_id):
         """
@@ -235,6 +256,61 @@ class PersonalLibrary:
                           ORDER BY borrow_count ASC
                           LIMIT 1''')
         return cursor.fetchone()
+
+    def clear_all_tables(self):
+        """
+        Clear all rows from books, lendors, and borrowed tables.
+        Returns:
+            str: Success message or error.
+        """
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute('DELETE FROM books')
+            cursor.execute('DELETE FROM lendors')
+            cursor.execute('DELETE FROM borrowed')
+            self.conn.commit()
+            return "All tables cleared."
+        except Exception as e:
+            return f"Error clearing tables: {e}"
+
+    def import_from_excel(self, file_path):
+        """
+        Import data from an Excel file and overwrite existing tables.
+        Args:
+            file_path (str): Path to the Excel file.
+        Returns:
+            str: Success message or error.
+        """
+        try:
+            xls = pd.ExcelFile(file_path)
+            cursor = self.conn.cursor()
+            # Clear tables first
+            cursor.execute('DELETE FROM books')
+            cursor.execute('DELETE FROM lendors')
+            cursor.execute('DELETE FROM borrowed')
+            self.conn.commit()
+            # Import books
+            if 'Books' in xls.sheet_names:
+                df_books = pd.read_excel(xls, 'Books')
+                for _, row in df_books.iterrows():
+                    cursor.execute('INSERT INTO books (id, title, author, added_date) VALUES (?, ?, ?, ?)',
+                                   (row['id'], row['title'], row['author'], row['added_date']))
+            # Import lendors
+            if 'Lendors' in xls.sheet_names:
+                df_lendors = pd.read_excel(xls, 'Lendors')
+                for _, row in df_lendors.iterrows():
+                    cursor.execute('INSERT INTO lendors (id, name, address, mobile) VALUES (?, ?, ?, ?)',
+                                   (row['id'], row['name'], row['address'], row['mobile']))
+            # Import borrowed
+            if 'Borrowed' in xls.sheet_names:
+                df_borrowed = pd.read_excel(xls, 'Borrowed', dtype=object)
+                for _, row in df_borrowed.iterrows():
+                    cursor.execute('INSERT INTO borrowed (id, lendor_id, book_id, returned) VALUES (?, ?, ?, ?)',
+                                   (row['id'], row['lendor_id'], row['book_id'], row['returned']))
+            self.conn.commit()
+            return "Data imported from Excel and tables overwritten."
+        except Exception as e:
+            return f"Error importing from Excel: {e}"
 
     def close(self):
         """
