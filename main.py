@@ -12,6 +12,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+from kivy.uix.spinner import Spinner
 from kivy.uix.textinput import TextInput
 from src.personal_library import PersonalLibrary
 
@@ -54,12 +55,17 @@ class ManageDataScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
-        self.filename_input = TextInput(text='data.xls', hint_text='Enter filename (e.g. data.xls)', size_hint_y=0.1)
+        self.filename_input = TextInput(text='data', hint_text='Enter filename (e.g. data)', size_hint_y=0.1)
+        self.format_spinner = Spinner(
+            text='json',
+            values=('xls', 'json'),
+            size_hint_y=0.1
+        )
         self.selected_path = None
-        export_btn = Button(text='Export All Data to Excel', size_hint_y=0.15)
-        export_btn.bind(on_release=self.export_to_excel)
-        import_btn = Button(text='Import Data from Excel', size_hint_y=0.15)
-        import_btn.bind(on_release=self.import_from_excel)
+        export_btn = Button(text='Export All Data', size_hint_y=0.15)
+        export_btn.bind(on_release=self.export_tables)
+        import_btn = Button(text='Import Data', size_hint_y=0.15)
+        import_btn.bind(on_release=self.import_tables)
         clear_btn = Button(text='Clear All Tables', size_hint_y=0.15)
         clear_btn.bind(on_release=self.clear_tables)
         self.result = Label(text='', size_hint_y=0.15, valign='top', halign='left')
@@ -67,6 +73,7 @@ class ManageDataScreen(Screen):
         self.result.text_size = (None, None)
         back_btn = Button(text='Back', size_hint_y=0.15, on_release=lambda x: setattr(self.manager, 'current', 'main_menu'))
         layout.add_widget(self.filename_input)
+        layout.add_widget(self.format_spinner)
         layout.add_widget(export_btn)
         layout.add_widget(import_btn)
         layout.add_widget(clear_btn)
@@ -76,36 +83,53 @@ class ManageDataScreen(Screen):
 
     def get_file_path(self):
         filename = self.filename_input.text.strip()
+        file_format = self.format_spinner.text.strip().lower()
         if not filename:
-            self.result.text = "Please enter a filename ending with .xls."
-            return None, None
-        if not filename.endswith('.xls'):
-            self.result.text = "Filename must end with .xls."
-            return None, None
-        # Use Documents as C:\Users\prade\work\GitHub\personal_library for windows
-        # /sdcard/Download/mylibrary for Android
+            self.result.text = "Please enter a filename and select export format."
+            return None, None, None
         if os.name == 'nt':  # Windows
             folder = r"C:\Users\prade\work\GitHub\personal_library"
         else:  # macOS/Linux/Android
             folder = r'/sdcard/Download/mylibrary'
+        return folder, filename+'.'+file_format
 
-        return folder, filename
-
-    def export_to_excel(self, instance):
+    def export_tables(self, instance):
         folder, filename = self.get_file_path()
-        if not folder or not filename:
+        file_format = filename.split('.')[-1].lower()
+        if file_format not in ('xls', 'json'):
+            self.result.text = "Supported formats are .xls and .json."
+            return
+        if not folder or not filename or not file_format:
+            self.result.text = "Directory or filename is invalid."
             return
         os.makedirs(folder, exist_ok=True)
         file_path = os.path.join(folder, filename)
-        result = library.export_to_excel(file_path)
+        if file_format == 'xls':
+            result = library.export_to_excel(file_path)
+        elif file_format == 'json':
+            result = library.export_to_json(file_path)
+        else:
+            result = f"Unsupported format: {file_format}"
         self.result.text = self._wrap_text(result)
 
-    def import_from_excel(self, instance):
+    def import_tables(self, instance):
         folder, filename = self.get_file_path()
-        if not folder or not filename:
+        file_format = filename.split('.')[-1].lower()
+        if file_format not in ('xls', 'json'):
+            self.result.text = "Supported formats are .xls and .json."
+            return
+        if not folder or not filename or not file_format:
+            self.result.text = "Directory or filename is invalid."
+            return
+        if not folder or not filename or not file_format:
             return
         file_path = os.path.join(folder, filename)
-        result = library.import_from_excel(file_path)
+        if file_format == 'xls':
+            result = library.import_from_excel(file_path)
+        elif file_format == 'json':
+            result = library.import_from_json(file_path)
+        else:
+            result = f"Unsupported format: {file_format}"
         self.result.text = self._wrap_text(result)
 
     def clear_tables(self, instance):

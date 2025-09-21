@@ -1,0 +1,98 @@
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "Bobby Fischer Teaches Chess",
+      "author": "Bobby Fischer",
+      "added_date": "2025-09-01"
+    },
+    {
+      "id": 2,
+      "title": "Bobby Fischer Teaches Chess",
+      "author": "Bobby Fischer",
+      "added_date": "2025-09-01"
+    },
+    {
+      "id": 3,
+      "title": "Pandolfini's Endgame Course",
+      "author": "Bruce Pandolfini",
+      "added_date": "2025-09-01"
+    },
+    {
+      "id": 4,
+      "title": "Part1 5334 Problems, Combinations",
+      "author": "Laszlo Polgar",
+      "added_date": "2025-09-01"
+    },
+    {
+      "id": 5,
+      "title": "Part2 5334 Problems, Combinations",
+      "author": "Laszlo Polgar",
+      "added_date": "2025-09-01"
+    }
+  ],
+  "lendors": [
+    {
+      "id": 1,
+      "name": "Karthik",
+      "address": "Orchid 205",
+      "mobile": "9700366387"
+    },
+    {
+      "id": 2,
+      "name": "Shanmuk",
+      "address": "Orchid 307",
+      "mobile": "7760535326"
+    },
+    {
+      "id": 3,
+      "name": "Ojaswee",
+      "address": "Lantana 205",
+      "mobile": "9290279522"
+    },
+    {
+      "id": 4,
+      "name": "Mokshith",
+      "address": "Lantana 211",
+      "mobile": "9989288259"
+    },
+    {
+      "id": 5,
+      "name": "Brahmani",
+      "address": "Dhalia 101",
+      "mobile": "9491460380"
+    }
+  ],
+  "borrowed": [
+    {
+      "id": 1,
+      "lendor_id": 2,
+      "book_id": 1,
+      "returned": 1
+    },
+    {
+      "id": 2,
+      "lendor_id": 4,
+      "book_id": 2,
+      "returned": 1
+    },
+    {
+      "id": 3,
+      "lendor_id": 1,
+      "book_id": 5,
+      "returned": 1
+    },
+    {
+      "id": 4,
+      "lendor_id": 3,
+      "book_id": 4,
+      "returned": 1
+    },
+    {
+      "id": 5,
+      "lendor_id": 5,
+      "book_id": 3,
+      "returned": 1
+    }
+  ]
+}

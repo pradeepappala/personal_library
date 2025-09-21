@@ -10,6 +10,53 @@ import pandas as pd
 
 
 class PersonalLibrary:
+    def export_to_json(self, file_path):
+        """
+        Export all tables to a single JSON file.
+        """
+        try:
+            with self.conn:
+                books_df = pd.read_sql_query('SELECT * FROM books', self.conn)
+                lendors_df = pd.read_sql_query('SELECT * FROM lendors', self.conn)
+                borrowed_df = pd.read_sql_query('SELECT * FROM borrowed', self.conn)
+            data = {
+                'books': books_df.to_dict(orient='records'),
+                'lendors': lendors_df.to_dict(orient='records'),
+                'borrowed': borrowed_df.to_dict(orient='records')
+            }
+            import json
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            return f"Exported to {file_path} as JSON."
+        except Exception as e:
+            return f"Export failed: {e}"
+
+    def import_from_json(self, file_path):
+        """
+        Import all tables from a single JSON file.
+        """
+        try:
+            import json
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            cursor = self.conn.cursor()
+            cursor.execute('DELETE FROM books')
+            cursor.execute('DELETE FROM lendors')
+            cursor.execute('DELETE FROM borrowed')
+            self.conn.commit()
+            for row in data.get('books', []):
+                cursor.execute('INSERT INTO books (id, title, author, added_date) VALUES (?, ?, ?, ?)',
+                               (row['id'], row['title'], row['author'], row['added_date']))
+            for row in data.get('lendors', []):
+                cursor.execute('INSERT INTO lendors (id, name, address, mobile) VALUES (?, ?, ?, ?)',
+                               (row['id'], row['name'], row['address'], row['mobile']))
+            for row in data.get('borrowed', []):
+                cursor.execute('INSERT INTO borrowed (id, lendor_id, book_id, returned) VALUES (?, ?, ?, ?)',
+                               (row['id'], row['lendor_id'], row['book_id'], row['returned']))
+            self.conn.commit()
+            return "Data imported from JSON and tables overwritten."
+        except Exception as e:
+            return f"Error importing from JSON: {e}"
     """
     PersonalLibrary manages books, lenders, and borrowing/returning operations using SQLite.
     """
