@@ -28,16 +28,10 @@ class MainMenu(Screen):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
         buttons = [
-            ("Add Book", "add_book"),
-            ("Show All Books", "show_all_books"),
+            ("Manage Books", "manage_books"),
+            ("Manage Lendors", "manage_lendors"),
             ("Get Borrowed Books with Lender details", "borrowed_books_lender"),
             ("Show Available Books", "show_available_books"),
-            ("Show All Lenders", "show_all_lendors"),
-            ("Add Lender", "add_lender"),
-            ("Borrow Book", "borrow_book"),
-            ("Return Book", "return_book"),
-            ("Remove Book", "remove_book"),
-            ("Remove Lender", "remove_lender"),
             ("Manage Tables", "manage_tables"),
         ]
         for text, screen in buttons:
@@ -46,6 +40,78 @@ class MainMenu(Screen):
                 self.manager, 'current', s))
             layout.add_widget(btn)
         self.add_widget(layout)
+
+
+class ManageLendorsScreen(Screen):
+    """
+    Screen to manage all lender operations: show, add, remove.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
+        show_btn = Button(text='Show All Lenders')
+        show_btn.bind(on_release=self.show_lendors)
+        add_btn = Button(text='Add Lender')
+        add_btn.bind(on_release=self.show_add_lender)
+        remove_btn = Button(text='Remove Lender')
+        remove_btn.bind(on_release=self.show_remove_lender)
+        back_btn = Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu'))
+        layout.add_widget(show_btn)
+        layout.add_widget(add_btn)
+        layout.add_widget(remove_btn)
+        layout.add_widget(back_btn)
+        self.add_widget(layout)
+
+    def show_lendors(self, instance):
+        self.manager.current = 'show_all_lendors'
+
+    def show_add_lender(self, instance):
+        self.manager.current = 'add_lender'
+
+    def show_remove_lender(self, instance):
+        self.manager.current = 'remove_lender'
+
+
+class ManageBooksScreen(Screen):
+    """
+    Screen to manage all book operations: add, show, borrow, return, remove, show borrowed.
+    """
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical', spacing=10, padding=20)
+        add_btn = Button(text='Add Book')
+        add_btn.bind(on_release=self.show_add_book)
+        show_btn = Button(text='Show All Books')
+        show_btn.bind(on_release=self.show_all_books)
+        borrow_btn = Button(text='Borrow Book')
+        borrow_btn.bind(on_release=self.show_borrow_book)
+        return_btn = Button(text='Return Book')
+        return_btn.bind(on_release=self.show_return_book)
+        remove_btn = Button(text='Remove Book')
+        remove_btn.bind(on_release=self.show_remove_book)
+        back_btn = Button(text='Back', on_release=lambda x: setattr(self.manager, 'current', 'main_menu'))
+        layout.add_widget(add_btn)
+        layout.add_widget(show_btn)
+        layout.add_widget(borrow_btn)
+        layout.add_widget(return_btn)
+        layout.add_widget(remove_btn)
+        layout.add_widget(back_btn)
+        self.add_widget(layout)
+
+    def show_add_book(self, instance):
+        self.manager.current = 'add_book'
+
+    def show_all_books(self, instance):
+        self.manager.current = 'show_all_books'
+
+    def show_borrow_book(self, instance):
+        self.manager.current = 'borrow_book'
+
+    def show_return_book(self, instance):
+        self.manager.current = 'return_book'
+
+    def show_remove_book(self, instance):
+        self.manager.current = 'remove_book'
 
 
 class ManageDataScreen(Screen):
@@ -159,7 +225,7 @@ class ShowAllLendorsScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_lendors')))
         self.add_widget(layout)
 
     def show_lendors(self, instance):
@@ -191,7 +257,7 @@ class AddBookScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_books')))
         self.add_widget(layout)
 
     def add_book(self, instance):
@@ -228,7 +294,7 @@ class RemoveBookScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_books')))
         self.add_widget(layout)
 
     def show_book_details(self, instance):
@@ -270,7 +336,7 @@ class ShowAllBooksScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_books')))
         self.add_widget(layout)
 
     def show_books(self, instance):
@@ -332,7 +398,7 @@ class AddLenderScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_lendors')))
         self.add_widget(layout)
 
     def add_lender(self, instance):
@@ -370,7 +436,7 @@ class RemoveLenderScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_lendors')))
         self.add_widget(layout)
 
     def show_lender_details(self, instance):
@@ -422,7 +488,7 @@ class BorrowBookScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_books')))
         self.add_widget(layout)
 
     def show_lender_details(self, instance):
@@ -484,7 +550,7 @@ class ReturnBookScreen(Screen):
         scroll.add_widget(self.result)
         layout.add_widget(scroll)
         layout.add_widget(Button(text='Back', on_release=lambda x: setattr(
-            self.manager, 'current', 'main_menu')))
+            self.manager, 'current', 'manage_books')))
         self.add_widget(layout)
 
     def show_lender_details(self, instance):
@@ -570,6 +636,8 @@ class PersonalLibraryApp(App):
     def build(self):
         sm = ScreenManager()
         sm.add_widget(MainMenu(name='main_menu'))
+        sm.add_widget(ManageBooksScreen(name='manage_books'))
+        sm.add_widget(ManageLendorsScreen(name='manage_lendors'))
         sm.add_widget(AddBookScreen(name='add_book'))
         sm.add_widget(ShowAllBooksScreen(name='show_all_books'))
         sm.add_widget(BorrowedBooksLenderScreen(name='borrowed_books_lender'))

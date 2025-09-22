@@ -2,7 +2,7 @@
 
 ## Project Overview
 This is a Kivy-based desktop/mobile app for managing a personal book library, with SQLite as the backend.
-Main UI logic is in `main.py`, using Kivy screens for each operation (add/remove books/lenders, borrow/return books, view details).
+Main UI logic is in `main.py`, using Kivy screens for each operation. Book-related operations (add/show/remove/borrow/return books, get borrowed books with lender details) are grouped under the "Manage Books" screen. Lender-related operations (add/show/remove lenders) are grouped under the "Manage Lendors" screen. Other screens handle details and data management.
 Core backend logic is in `src/personal_library.py` (class `PersonalLibrary`), which handles all database operations and queries.
 
 ## Architecture & Data Flow
@@ -26,6 +26,7 @@ All book/lender/borrowed records are stored in SQLite tables: `books`, `lendors`
 
 ## Project-Specific Patterns & Conventions
 All Kivy screens use a vertical `BoxLayout` and a scrollable result label for output.
+Book-related screens are grouped under `ManageBooksScreen`, and lender-related screens under `ManageLendorsScreen` for better organization and navigation.
 Database schema is created automatically if missing (see `create_tables` in `PersonalLibrary`).
 Book/lender IDs are auto-incremented integers; borrowed status is tracked via the `returned` field in `borrowed` table.
 UI navigation is managed via Kivy's `ScreenManager`.
@@ -44,7 +45,7 @@ SQLite for persistence (`src/personal_library.py`)
 Buildozer for Android packaging (see README)
 
 ## Key Files & Directories
-- `main.py`: Kivy UI, screen logic, app entry point
+- `main.py`: Kivy UI, screen logic, app entry point. Includes `ManageBooksScreen` and `ManageLendorsScreen` for grouped book/lender operations.
 - `src/personal_library.py`: Backend, DB logic
 - `requirements.txt`: Python dependencies
 - `README.md`: Setup, build, and run instructions
