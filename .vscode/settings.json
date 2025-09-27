@@ -1,0 +1,17 @@
+{
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests", // This specifies the 'tests' folder
+        "-p",
+        "test_*.py"
+    ],
+    "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+}

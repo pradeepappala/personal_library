@@ -17,11 +17,11 @@ git clone https://github.com/pradeepappala/personal_library.git
 ## Create and Activate Virtual Environment
 ```sh
 cd personal_library
-python -m venv library_venv
+python -m venv .venv
 # Windows
-library_venv\Scripts\activate
+.venv\Scripts\activate
 # Linux
-source library_venv/bin/activate
+source .venv/bin/activate
 ```
 
 ## Install Requirements
@@ -36,7 +36,7 @@ python -m main
 
 ## Run App from VS Code
 Open workspace in VS Code
-Select Python interpreter from venv (`library_venv\Scripts\python.exe`)
+Select Python interpreter from venv (`.venv\Scripts\python.exe`)
 Run (F5 / Ctrl+F5)
 
 ## Build Android APK (Kivy UI)

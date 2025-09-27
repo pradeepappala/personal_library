@@ -155,8 +155,11 @@ class ManageDataScreen(Screen):
             return None, None, None
         if os.name == 'nt':  # Windows
             folder = r"C:\Users\prade\work\GitHub\personal_library"
-        else:  # macOS/Linux/Android
-            folder = r'/sdcard/Download/mylibrary'
+        if os.name == 'posix':  # macOS/Linux/Android
+            if 'ANDROID_ARGUMENT' in os.environ:  # Android
+                folder = r'/sdcard/Download/mylibrary'
+            else:  # macOS/Linux
+                folder = os.path.join(os.path.expanduser('~'), 'work/personal_library')
         return folder, filename+'.'+file_format
 
     def export_tables(self, instance):
