@@ -2,4 +2,3 @@ pandas
 openpyxl
 db-sqlite3
 kivy
-plyer

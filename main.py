@@ -154,8 +154,8 @@ class ManageDataScreen(Screen):
             self.result.text = "Please enter a filename and select export format."
             return None, None, None
         if os.name == 'nt':  # Windows
-            folder = r"C:\Users\prade\work\GitHub\personal_library"
-        if os.name == 'posix':  # macOS/Linux/Android
+            folder = os.path.join(os.path.expanduser('~'), 'work/personal_library')
+        elif os.name == 'posix':  # macOS/Linux/Android
             if 'ANDROID_ARGUMENT' in os.environ:  # Android
                 folder = r'/sdcard/Download/mylibrary'
             else:  # macOS/Linux

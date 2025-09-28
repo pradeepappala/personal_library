@@ -1,3 +1,22 @@
+## Data Import/Export (xls)
+
+- All data import/export is now handled via xls file for maximum compatibility, especially on Android.
+- Export: `library.export_to_excel(folder_path)` saves:
+	- `/sdcard/Download/mylibrary/<name>.xls` for Android
+	- `os.path.join(os.path.expanduser('~'), 'work/personal_library', '<name>.xls')` for Windows/Linux/macOS
+- Import: `library.import_from_excel(folder_path)` loads data from these xls files and overwrites the tables.
+- No Excel or pandas ExcelWriter is used for import/export; only pandas xls methods are required.
+## Example Patterns
+- To add a book: `library.add_book(title, author)`
+- To show all books: `library.get_all_books()` → format results for display
+- To borrow a book: `library.borrow_book(lendor_id, book_id)`
+- To return a book: `library.return_borrowed_book(borrowed_id)`
+- To export all tables: `library.export_to_excel(folder_path)`
+	- Windows/Linux/macOS: `os.path.join(os.path.expanduser('~'), 'work/personal_library')`
+	- Android: `/sdcard/Download/mylibrary`
+- To import all tables: `library.import_from_excel(folder_path)`
+	- Windows/Linux/macOS: `os.path.join(os.path.expanduser('~'), 'work/personal_library')`
+	- Android: `/sdcard/Download/mylibrary`
 # personal_library
 Simple Single use library
 
