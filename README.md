@@ -110,6 +110,7 @@ Run (F5 / Ctrl+F5)
 	- Copy new files:
 	  ```bash
 	  rsync -arv --files-from='list.txt' /mnt/c/Users/prade/work/GitHub/personal_library/ /home/pradeep/android_app/
+	  rsync -arv --files-from='list.txt' ~/work/personal_library/ ~/android_app/ (Linux)
 	  ```
 
 #### 8. Initialize and edit buildozer.spec
@@ -131,6 +132,7 @@ Run (F5 / Ctrl+F5)
 
 ### Test APK
 	```bash
-	cp bin/mylibraryapp-0.1-arm64-v8a_armeabi-v7a-debug.apk /mnt/c/Users/prade/work/GitHub/android_apps/
+	cp bin/mylibraryapp-0.1-arm64-v8a_armeabi-v7a-debug.apk /mnt/c/Users/prade/work/GitHub/android_app/
+	cp not required for linux
 	```
 	- Transfer to phone using Wifi File Transfer app or USB cable, install and test
